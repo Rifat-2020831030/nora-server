@@ -14,24 +14,18 @@ const tokenSchema = mongoose.Schema(
       ref: 'User',
       required: true,
     },
-    type: {
-      type: String,
-      enum: [tokenTypes.REFRESH, tokenTypes.RESET_PASSWORD, tokenTypes.VERIFY_EMAIL],
-      required: true,
-    },
-    expires: {
+    expiresAt: {
       type: Date,
       required: true,
-    },
-    blacklisted: {
-      type: Boolean,
-      default: false,
     },
   },
   {
     timestamps: true,
   }
 );
+
+tokenSchema.index({ expiresAt: 1 }, { expireAfterSeconds: 0 });
+tokenSchema.index({ user: 1 });
 
 // add plugin that converts mongoose to json
 tokenSchema.plugin(toJSON);
