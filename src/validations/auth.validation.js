@@ -6,6 +6,7 @@ const register = {
     email: Joi.string().required().email(),
     password: Joi.string().required().custom(password),
     name: Joi.string().required(),
+    interests: Joi.array().items(Joi.string()),
   }),
 };
 
@@ -28,24 +29,10 @@ const refreshTokens = {
   }),
 };
 
-const forgotPassword = {
+const changePassword = {
   body: Joi.object().keys({
-    email: Joi.string().email().required(),
-  }),
-};
-
-const resetPassword = {
-  query: Joi.object().keys({
-    token: Joi.string().required(),
-  }),
-  body: Joi.object().keys({
-    password: Joi.string().required().custom(password),
-  }),
-};
-
-const verifyEmail = {
-  query: Joi.object().keys({
-    token: Joi.string().required(),
+    currentPassword: Joi.string().required(),
+    newPassword: Joi.string().required().custom(password),
   }),
 };
 
@@ -54,7 +41,5 @@ module.exports = {
   login,
   logout,
   refreshTokens,
-  forgotPassword,
-  resetPassword,
-  verifyEmail,
+  changePassword,
 };

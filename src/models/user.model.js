@@ -40,15 +40,24 @@ const userSchema = mongoose.Schema(
       enum: roles,
       default: 'user',
     },
-    isEmailVerified: {
+    interests: {
+      type: [String],
+    },
+    isDeleted: {
       type: Boolean,
       default: false,
+    },
+    deletedAt: {
+      type: Date,
     },
   },
   {
     timestamps: true,
   }
 );
+
+userSchema.index({ email: 1 }, { unique: true });
+userSchema.index({ role: 1, isDeleted: 1 });
 
 // add plugin that converts mongoose to json
 userSchema.plugin(toJSON);

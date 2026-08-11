@@ -7,6 +7,11 @@ const userController = require('../../controllers/user.controller');
 const router = express.Router();
 
 router
+  .route('/me')
+  .get(auth(), userController.getMe)
+  .patch(auth(), validate(userValidation.updateUser), userController.updateMe);
+
+router
   .route('/')
   .post(auth('manageUsers'), validate(userValidation.createUser), userController.createUser)
   .get(auth('getUsers'), validate(userValidation.getUsers), userController.getUsers);
