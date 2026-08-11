@@ -2,6 +2,8 @@ const express = require('express');
 const authRoute = require('./auth.route');
 const userRoute = require('./user.route');
 const noteRoute = require('./note.route');
+const mediaRoute = require('./media.route');
+const postRoute = require('./post.route');
 const docsRoute = require('./docs.route');
 const config = require('../../config/config');
 
@@ -19,6 +21,14 @@ const defaultRoutes = [
   {
     path: '/notes',
     route: noteRoute,
+  },
+  {
+    path: '/media',
+    route: mediaRoute,
+  },
+  {
+    path: '/posts',
+    route: postRoute,
   },
 ];
 

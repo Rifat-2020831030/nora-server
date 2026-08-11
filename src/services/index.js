@@ -3,3 +3,5 @@ module.exports.tokenService = require('./token.service');
 module.exports.userService = require('./user.service');
 module.exports.noteService = require('./note.service');
 module.exports.shareService = require('./share.service');
+module.exports.mediaService = require('./media.service');
+module.exports.postService = require('./post.service');

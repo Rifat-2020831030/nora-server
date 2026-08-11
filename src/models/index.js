@@ -2,3 +2,4 @@ module.exports.Token = require('./token.model');
 module.exports.User = require('./user.model');
 module.exports.Note = require('./note.model');
 module.exports.SharedNote = require('./sharedNote.model');
+module.exports.Post = require('./post.model');
