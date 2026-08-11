@@ -112,7 +112,7 @@ describe('Error middlewares', () => {
 
       errorHandler(error, httpMocks.createRequest(), res);
 
-      expect(sendSpy).toHaveBeenCalledWith(expect.objectContaining({ code: error.statusCode, message: error.message }));
+      expect(sendSpy).toHaveBeenCalledWith(expect.objectContaining({ success: false, message: error.message }));
       expect(res.locals.errorMessage).toBe(error.message);
     });
 
@@ -125,7 +125,7 @@ describe('Error middlewares', () => {
       errorHandler(error, httpMocks.createRequest(), res);
 
       expect(sendSpy).toHaveBeenCalledWith(
-        expect.objectContaining({ code: error.statusCode, message: error.message, stack: error.stack })
+        expect.objectContaining({ success: false, message: error.message, stack: error.stack })
       );
       config.env = process.env.NODE_ENV;
     });
@@ -140,7 +140,7 @@ describe('Error middlewares', () => {
 
       expect(sendSpy).toHaveBeenCalledWith(
         expect.objectContaining({
-          code: httpStatus.INTERNAL_SERVER_ERROR,
+          success: false,
           message: httpStatus[httpStatus.INTERNAL_SERVER_ERROR],
         })
       );
@@ -158,7 +158,7 @@ describe('Error middlewares', () => {
 
       expect(sendSpy).toHaveBeenCalledWith(
         expect.objectContaining({
-          code: error.statusCode,
+          success: false,
           message: error.message,
         })
       );
