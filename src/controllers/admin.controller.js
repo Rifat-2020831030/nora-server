@@ -5,7 +5,7 @@ const { sendSuccess } = require('../utils/response');
 const { userService, noteService, postService, analyticsService } = require('../services');
 
 const getUsers = catchAsync(async (req, res) => {
-  const filter = pick(req.query, ['name', 'role']);
+  const filter = pick(req.query, ['name', 'email', 'role']);
   const options = pick(req.query, ['sortBy', 'limit', 'page']);
   const result = await userService.queryUsers(filter, options);
 
