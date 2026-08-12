@@ -1,5 +1,5 @@
 const { S3Client, PutObjectCommand } = require('@aws-sdk/client-s3');
-const { v4: uuidv4 } = require('uuid');
+
 const path = require('path');
 const httpStatus = require('http-status');
 const config = require('../config/config');
@@ -25,6 +25,8 @@ const uploadFile = async (file) => {
   }
 
   const extension = path.extname(file.originalname);
+  // eslint-disable-next-line import/no-unresolved
+  const { v4: uuidv4 } = await import('uuid');
   const uniqueFilename = `${uuidv4()}${extension}`;
 
   const command = new PutObjectCommand({
