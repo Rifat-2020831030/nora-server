@@ -1,5 +1,10 @@
 const request = require('supertest');
 const httpStatus = require('http-status');
+
+jest.mock('../../src/services/media.service', () => ({
+  uploadFile: jest.fn(),
+}));
+
 const app = require('../../src/app');
 const config = require('../../src/config/config');
 

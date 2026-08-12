@@ -1,8 +1,8 @@
 const mongoose = require('mongoose');
-const { noteService } = require('../../../src/services');
+const httpStatus = require('http-status');
+const noteService = require('../../../src/services/note.service');
 const { Note } = require('../../../src/models');
 const ApiError = require('../../../src/utils/ApiError');
-const httpStatus = require('http-status');
 
 jest.mock('../../../src/models/note.model.js');
 
@@ -32,7 +32,7 @@ describe('Note service', () => {
     test('should apply filter and pagination options correctly', async () => {
       const filter = { status: 'active' };
       const options = { limit: 10, page: 1 };
-      
+
       Note.paginate.mockResolvedValue({ results: [], page: 1, limit: 10, totalPages: 1, totalResults: 0 });
 
       await noteService.queryNotes(userId, filter, options);
@@ -43,7 +43,7 @@ describe('Note service', () => {
     test('should apply text search filter when search keyword is provided', async () => {
       const filter = { search: 'keyword' };
       const options = { limit: 10, page: 1 };
-      
+
       Note.paginate.mockResolvedValue({ results: [], page: 1, limit: 10, totalPages: 1, totalResults: 0 });
 
       await noteService.queryNotes(userId, filter, options);
@@ -68,7 +68,7 @@ describe('Note service', () => {
       const updateBody = { title: 'Updated' };
       const mockSave = jest.fn();
       const mockNote = { id: noteId, owner: userId, title: 'Test', save: mockSave };
-      
+
       Note.findOne.mockResolvedValue(mockNote);
 
       const result = await noteService.updateNoteById(noteId, userId, updateBody);
@@ -82,8 +82,9 @@ describe('Note service', () => {
     test('should throw 404 error if note not found', async () => {
       Note.findOne.mockResolvedValue(null);
 
-      await expect(noteService.updateNoteById(noteId, userId, { title: 'Updated' }))
-        .rejects.toThrow(new ApiError(httpStatus.NOT_FOUND, 'Note not found'));
+      await expect(noteService.updateNoteById(noteId, userId, { title: 'Updated' })).rejects.toThrow(
+        new ApiError(httpStatus.NOT_FOUND, 'Note not found')
+      );
     });
   });
 
@@ -91,7 +92,7 @@ describe('Note service', () => {
     test('should delete note if found', async () => {
       const mockRemove = jest.fn();
       const mockNote = { id: noteId, owner: userId, title: 'Test', remove: mockRemove };
-      
+
       Note.findOne.mockResolvedValue(mockNote);
 
       const result = await noteService.deleteNoteById(noteId, userId);
@@ -103,8 +104,9 @@ describe('Note service', () => {
     test('should throw 404 error if note not found', async () => {
       Note.findOne.mockResolvedValue(null);
 
-      await expect(noteService.deleteNoteById(noteId, userId))
-        .rejects.toThrow(new ApiError(httpStatus.NOT_FOUND, 'Note not found'));
+      await expect(noteService.deleteNoteById(noteId, userId)).rejects.toThrow(
+        new ApiError(httpStatus.NOT_FOUND, 'Note not found')
+      );
     });
   });
 
@@ -112,10 +114,10 @@ describe('Note service', () => {
     test('should archive note if found', async () => {
       const mockSave = jest.fn();
       const mockNote = { id: noteId, owner: userId, title: 'Test', save: mockSave };
-      
+
       Note.findOne.mockResolvedValue(mockNote);
 
-      const result = await noteService.archiveNoteById(noteId, userId);
+      await noteService.archiveNoteById(noteId, userId);
 
       expect(mockNote.status).toBe('archived');
       expect(mockNote.trashedAt).toBeNull();
@@ -127,10 +129,10 @@ describe('Note service', () => {
     test('should trash note if found', async () => {
       const mockSave = jest.fn();
       const mockNote = { id: noteId, owner: userId, title: 'Test', save: mockSave };
-      
+
       Note.findOne.mockResolvedValue(mockNote);
 
-      const result = await noteService.trashNoteById(noteId, userId);
+      await noteService.trashNoteById(noteId, userId);
 
       expect(mockNote.status).toBe('trashed');
       expect(mockNote.trashedAt).toBeInstanceOf(Date);
@@ -141,11 +143,18 @@ describe('Note service', () => {
   describe('restoreNoteById', () => {
     test('should restore note if found', async () => {
       const mockSave = jest.fn();
-      const mockNote = { id: noteId, owner: userId, title: 'Test', status: 'trashed', trashedAt: new Date(), save: mockSave };
-      
+      const mockNote = {
+        id: noteId,
+        owner: userId,
+        title: 'Test',
+        status: 'trashed',
+        trashedAt: new Date(),
+        save: mockSave,
+      };
+
       Note.findOne.mockResolvedValue(mockNote);
 
-      const result = await noteService.restoreNoteById(noteId, userId);
+      await noteService.restoreNoteById(noteId, userId);
 
       expect(mockNote.status).toBe('active');
       expect(mockNote.trashedAt).toBeNull();
@@ -156,9 +165,9 @@ describe('Note service', () => {
   describe('getNoteByIdForUser', () => {
     test('should return note if user is owner', async () => {
       Note.findById.mockResolvedValue({ _id: noteId, owner: userId });
-      
+
       const result = await noteService.getNoteByIdForUser(noteId, userId);
-      
+
       expect(Note.findById).toHaveBeenCalledWith(noteId);
       expect(result).toBeDefined();
     });
