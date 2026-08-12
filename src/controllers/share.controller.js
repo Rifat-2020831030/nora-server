@@ -26,7 +26,7 @@ const revokeShare = catchAsync(async (req, res) => {
 const getSharedWithMe = catchAsync(async (req, res) => {
   const options = pick(req.query, ['sortBy', 'limit', 'page']);
   const result = await shareService.getNotesSharedWithUser(req.user.id, options);
-  
+
   const { results, ...meta } = result;
   // Send with custom envelope
   res.status(httpStatus.OK).send({

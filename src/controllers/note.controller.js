@@ -18,9 +18,9 @@ const getNotes = catchAsync(async (req, res) => {
   }
   const options = pick(req.query, ['sortBy', 'limit', 'page']);
   const result = await noteService.queryNotes(req.user.id, filter, options);
-  
+
   // result comes back with results and meta (if using paginate plugin)
-  // Assuming our sendSuccess accepts standard paginate payload: 
+  // Assuming our sendSuccess accepts standard paginate payload:
   // We'll map results to data and pass the rest as meta
   const { results, ...meta } = result;
   // Send with custom envelope

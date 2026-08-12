@@ -23,16 +23,16 @@ const createPost = async (userId, postBody) => {
  */
 const queryPosts = async (filter, options) => {
   const postFilter = { ...filter, isDeleted: false };
-  
+
   if (filter.search) {
     postFilter.$text = { $search: filter.search };
     delete postFilter.search;
   }
-  
-  // Always populate author
-  options.populate = 'author';
 
-  const posts = await Post.paginate(postFilter, options);
+  // Always populate author
+  const queryOptions = { ...options, populate: 'author' };
+
+  const posts = await Post.paginate(postFilter, queryOptions);
   return posts;
 };
 
@@ -58,7 +58,7 @@ const getPostById = async (postId) => {
  */
 const updatePostById = async (postId, userId, updateBody) => {
   const post = await getPostById(postId);
-  
+
   if (post.author._id.toString() !== userId.toString()) {
     throw new ApiError(httpStatus.FORBIDDEN, 'You do not have permission to edit this post');
   }
@@ -76,7 +76,7 @@ const updatePostById = async (postId, userId, updateBody) => {
  */
 const deletePostById = async (postId, userId) => {
   const post = await getPostById(postId);
-  
+
   if (post.author._id.toString() !== userId.toString()) {
     throw new ApiError(httpStatus.FORBIDDEN, 'You do not have permission to delete this post');
   }

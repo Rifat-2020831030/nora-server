@@ -1,5 +1,5 @@
 const httpStatus = require('http-status');
-const { Note } = require('../models');
+const { Note, SharedNote } = require('../models');
 const ApiError = require('../utils/ApiError');
 
 /**
@@ -24,12 +24,12 @@ const createNote = async (userId, noteBody) => {
  */
 const queryNotes = async (userId, filter, options) => {
   const noteFilter = { ...filter, owner: userId };
-  
+
   if (filter.search) {
     noteFilter.$text = { $search: filter.search };
     delete noteFilter.search;
   }
-  
+
   const notes = await Note.paginate(noteFilter, options);
   return notes;
 };
@@ -87,18 +87,17 @@ const getNoteByIdForUser = async (noteId, userId) => {
   if (!note) {
     return null;
   }
-  
+
   if (note.owner.toString() === userId.toString()) {
     return note;
   }
 
   // Check if it's shared with the user
-  const { SharedNote } = require('../models');
   const shared = await SharedNote.findOne({ note: noteId, sharedWith: userId });
   if (shared) {
     return note;
   }
-  
+
   return null;
 };
 

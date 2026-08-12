@@ -14,7 +14,10 @@ const fileFilter = (req, file, cb) => {
   if (allowedMimeTypes.includes(file.mimetype)) {
     cb(null, true);
   } else {
-    cb(new ApiError(httpStatus.BAD_REQUEST, 'Invalid file type. Only JPEG, PNG, GIF, WEBP, MP4, and PDF are allowed.'), false);
+    cb(
+      new ApiError(httpStatus.BAD_REQUEST, 'Invalid file type. Only JPEG, PNG, GIF, WEBP, MP4, and PDF are allowed.'),
+      false
+    );
   }
 };
 

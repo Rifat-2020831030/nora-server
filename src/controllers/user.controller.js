@@ -20,14 +20,14 @@ const getUsers = catchAsync(async (req, res) => {
   }
   const options = pick(req.query, ['sortBy', 'limit', 'page']);
   const result = await userService.queryUsers(filter, options);
-  
+
   const meta = {
     page: result.page,
     limit: result.limit,
     total: result.totalResults,
     totalPages: result.totalPages,
   };
-  
+
   sendSuccess(res, httpStatus.OK, result.results, meta);
 });
 

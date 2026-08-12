@@ -1,6 +1,7 @@
 const jwt = require('jsonwebtoken');
 const moment = require('moment');
 const config = require('../config/config');
+const { tokenTypes } = require('../config/tokens');
 const { Token } = require('../models');
 
 /**
@@ -61,7 +62,7 @@ const generateAuthTokens = async (user) => {
 
   const refreshTokenExpires = moment().add(config.jwt.refreshExpirationDays || 7, 'days');
   const refreshToken = generateToken(user.id, refreshTokenExpires, tokenTypes.REFRESH);
-  
+
   await saveToken(refreshToken, user.id, refreshTokenExpires);
 
   return {

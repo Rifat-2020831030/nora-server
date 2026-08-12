@@ -10,11 +10,11 @@ const sendSuccess = (res, statusCode, data, meta = undefined) => {
     success: true,
     data,
   };
-  
+
   if (meta) {
     response.meta = meta;
   }
-  
+
   res.status(statusCode).send(response);
 };
 

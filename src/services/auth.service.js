@@ -74,14 +74,14 @@ const changePassword = async (userId, currentPassword, newPassword) => {
   if (!user || user.isDeleted) {
     throw new ApiError(httpStatus.UNAUTHORIZED, 'User not found');
   }
-  
+
   if (!(await user.isPasswordMatch(currentPassword))) {
     throw new ApiError(httpStatus.BAD_REQUEST, 'Incorrect current password');
   }
-  
+
   Object.assign(user, { password: newPassword });
   await user.save();
-  
+
   // Revoke all sessions on successful password change
   await logoutAll(userId);
 };

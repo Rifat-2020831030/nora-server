@@ -1,5 +1,5 @@
 const httpStatus = require('http-status');
-const { SharedNote, User, Note } = require('../models');
+const { SharedNote, User } = require('../models');
 const ApiError = require('../utils/ApiError');
 const noteService = require('./note.service');
 
@@ -90,8 +90,8 @@ const getNotesSharedWithUser = async (userId, options) => {
   // Find all shared notes for this user
   // This uses populate on the note field. Since we want pagination,
   // we can use the paginate plugin on SharedNote and populate 'note'.
-  options.populate = 'note,sharedBy';
-  return SharedNote.paginate({ sharedWith: userId }, options);
+  const queryOptions = { ...options, populate: 'note,sharedBy' };
+  return SharedNote.paginate({ sharedWith: userId }, queryOptions);
 };
 
 module.exports = {
