@@ -44,10 +44,57 @@ const restoreUser = {
   }),
 };
 
+const getGlobalNotes = {
+  query: Joi.object().keys({
+    status: Joi.string(),
+    tags: Joi.string(),
+    search: Joi.string(),
+    owner: Joi.string().custom(objectId),
+    sortBy: Joi.string(),
+    limit: Joi.number().integer(),
+    page: Joi.number().integer(),
+  }),
+};
+
+const getGlobalPosts = {
+  query: Joi.object().keys({
+    search: Joi.string(),
+    author: Joi.string().custom(objectId),
+    deleted: Joi.string().valid('true', 'false'),
+    sortBy: Joi.string(),
+    limit: Joi.number().integer(),
+    page: Joi.number().integer(),
+  }),
+};
+
+const restorePost = {
+  params: Joi.object().keys({
+    id: Joi.string().custom(objectId),
+  }),
+};
+
+const getNoteCountsAnalytics = {
+  query: Joi.object().keys({
+    limit: Joi.number().integer(),
+    page: Joi.number().integer(),
+  }),
+};
+
+const getUserGrowthAnalytics = {
+  query: Joi.object().keys({
+    granularity: Joi.string().valid('month', 'day'),
+  }),
+};
+
 module.exports = {
   getUsers,
   updateUser,
   deleteUser,
   restoreUser,
   getUserPostsAnalytics,
+  getGlobalNotes,
+  getGlobalPosts,
+  restorePost,
+  getNoteCountsAnalytics,
+  getUserGrowthAnalytics,
 };

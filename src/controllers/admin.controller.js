@@ -8,7 +8,7 @@ const getUsers = catchAsync(async (req, res) => {
   const filter = pick(req.query, ['name', 'role']);
   const options = pick(req.query, ['sortBy', 'limit', 'page']);
   const result = await userService.queryUsers(filter, options);
-  
+
   const { results, ...meta } = result;
   res.status(httpStatus.OK).send({
     success: true,
@@ -35,11 +35,11 @@ const restoreUser = catchAsync(async (req, res) => {
 const getGlobalNotes = catchAsync(async (req, res) => {
   const filter = pick(req.query, ['status', 'tags', 'search', 'owner']);
   const options = pick(req.query, ['sortBy', 'limit', 'page']);
-  
+
   // Note: we can use noteService.queryNotes to get notes regardless of owner
   // The service doesn't mandate owner in the filter itself, it just takes the filter.
   const result = await noteService.queryNotes(null, filter, options);
-  
+
   const { results, ...meta } = result;
   res.status(httpStatus.OK).send({
     success: true,
@@ -51,18 +51,27 @@ const getGlobalNotes = catchAsync(async (req, res) => {
 const getGlobalPosts = catchAsync(async (req, res) => {
   const filter = pick(req.query, ['search', 'author']);
   const options = pick(req.query, ['sortBy', 'limit', 'page']);
-  
-  // The postService filters out `isDeleted: false` by default for public APIs.
-  // For admin, we want everything. But for simplicity let's just use queryPosts.
-  // If we wanted to see deleted ones we'd have to tweak the service. Let's just use queryPosts for now.
+
+  if (req.query.deleted === 'true') {
+    filter.isDeleted = true;
+  } else if (req.query.deleted === 'false') {
+    filter.isDeleted = false;
+  }
+  // If omitted, postService will not restrict isDeleted, returning both active and deleted posts.
+
   const result = await postService.queryPosts(filter, options);
-  
+
   const { results, ...meta } = result;
   res.status(httpStatus.OK).send({
     success: true,
     data: results,
     meta,
   });
+});
+
+const restorePost = catchAsync(async (req, res) => {
+  const post = await postService.restorePostById(req.params.id);
+  sendSuccess(res, httpStatus.OK, post);
 });
 
 // Analytics endpoints
@@ -77,8 +86,20 @@ const getUserPostsAnalytics = catchAsync(async (req, res) => {
 });
 
 const getGrowthAnalytics = catchAsync(async (req, res) => {
-  const data = await analyticsService.getUserGrowthAnalytics();
+  const data = await analyticsService.getUserGrowthAnalytics(req.query.granularity);
   sendSuccess(res, httpStatus.OK, data);
+});
+
+const getNoteCountsAnalytics = catchAsync(async (req, res) => {
+  const options = pick(req.query, ['limit', 'page']);
+  const result = await analyticsService.getNoteCountsAnalytics(options);
+
+  const { results, ...meta } = result;
+  res.status(httpStatus.OK).send({
+    success: true,
+    data: results,
+    meta,
+  });
 });
 
 module.exports = {
@@ -88,7 +109,9 @@ module.exports = {
   restoreUser,
   getGlobalNotes,
   getGlobalPosts,
+  restorePost,
   getInterestsAnalytics,
   getUserPostsAnalytics,
   getGrowthAnalytics,
+  getNoteCountsAnalytics,
 };

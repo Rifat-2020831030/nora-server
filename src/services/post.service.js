@@ -22,7 +22,11 @@ const createPost = async (userId, postBody) => {
  * @returns {Promise<QueryResult>}
  */
 const queryPosts = async (filter, options) => {
-  const postFilter = { ...filter, isDeleted: false };
+  const postFilter = { ...filter };
+
+  if (postFilter.isDeleted === undefined) {
+    postFilter.isDeleted = false;
+  }
 
   if (filter.search) {
     postFilter.$text = { $search: filter.search };
@@ -86,10 +90,27 @@ const deletePostById = async (postId, userId) => {
   return post;
 };
 
+/**
+ * Restore soft deleted post by id
+ * @param {ObjectId} postId
+ * @returns {Promise<Post>}
+ */
+const restorePostById = async (postId) => {
+  const post = await Post.findOne({ _id: postId, isDeleted: true });
+  if (!post) {
+    throw new ApiError(httpStatus.BAD_REQUEST, 'Post is not deleted');
+  }
+
+  post.isDeleted = false;
+  await post.save();
+  return post;
+};
+
 module.exports = {
   createPost,
   queryPosts,
   getPostById,
   updatePostById,
   deletePostById,
+  restorePostById,
 };

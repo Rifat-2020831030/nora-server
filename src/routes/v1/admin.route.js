@@ -9,9 +9,7 @@ const router = express.Router();
 // Apply auth('manageUsers') to all admin routes
 router.use(auth('manageUsers'));
 
-router
-  .route('/users')
-  .get(validate(adminValidation.getUsers), adminController.getUsers);
+router.route('/users').get(validate(adminValidation.getUsers), adminController.getUsers);
 
 router
   .route('/users/:userId')
@@ -21,12 +19,22 @@ router
 router.post('/users/:userId/restore', validate(adminValidation.restoreUser), adminController.restoreUser);
 
 // Global content views
-router.get('/notes', adminController.getGlobalNotes);
-router.get('/posts', adminController.getGlobalPosts);
+router.get('/notes', validate(adminValidation.getGlobalNotes), adminController.getGlobalNotes);
+router.get('/posts', validate(adminValidation.getGlobalPosts), adminController.getGlobalPosts);
+router.patch('/posts/:id/restore', validate(adminValidation.restorePost), adminController.restorePost);
 
 // Analytics
 router.get('/analytics/interests', adminController.getInterestsAnalytics);
-router.get('/analytics/growth', adminController.getGrowthAnalytics);
-router.get('/analytics/user-posts/:userId', validate(adminValidation.getUserPostsAnalytics), adminController.getUserPostsAnalytics);
+router.get('/analytics/user-growth', validate(adminValidation.getUserGrowthAnalytics), adminController.getGrowthAnalytics);
+router.get(
+  '/analytics/user-posts/:userId',
+  validate(adminValidation.getUserPostsAnalytics),
+  adminController.getUserPostsAnalytics
+);
+router.get(
+  '/analytics/note-counts',
+  validate(adminValidation.getNoteCountsAnalytics),
+  adminController.getNoteCountsAnalytics
+);
 
 module.exports = router;
