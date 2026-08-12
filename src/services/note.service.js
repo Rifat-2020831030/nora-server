@@ -155,6 +155,32 @@ const restoreNoteById = async (noteId, userId) => {
   return note;
 };
 
+/**
+ * Cleanup trashed notes older than 30 days
+ * @returns {Promise<Object>} Object containing the number of deleted notes
+ */
+const cleanupTrashedNotes = async () => {
+  const thirtyDaysAgo = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000);
+
+  // Find notes that were trashed more than 30 days ago
+  const notesToDelete = await Note.find({
+    status: 'trashed',
+    trashedAt: { $lt: thirtyDaysAgo },
+  });
+
+  const noteIds = notesToDelete.map((note) => note._id);
+
+  if (noteIds.length > 0) {
+    // Cascade delete shared records
+    await SharedNote.deleteMany({ note: { $in: noteIds } });
+
+    // Delete the notes themselves
+    await Note.deleteMany({ _id: { $in: noteIds } });
+  }
+
+  return { deletedCount: noteIds.length };
+};
+
 module.exports = {
   createNote,
   queryNotes,
@@ -165,4 +191,5 @@ module.exports = {
   archiveNoteById,
   trashNoteById,
   restoreNoteById,
+  cleanupTrashedNotes,
 };

@@ -5,6 +5,7 @@ const { Note } = require('../../../src/models');
 const ApiError = require('../../../src/utils/ApiError');
 
 jest.mock('../../../src/models/note.model.js');
+jest.mock('../../../src/models/sharedNote.model.js');
 
 describe('Note service', () => {
   let userId;
@@ -172,5 +173,38 @@ describe('Note service', () => {
       expect(result).toBeDefined();
     });
     // Can test shared interaction via integration tests later
+  });
+
+  describe('cleanupTrashedNotes', () => {
+    test('should delete trashed notes older than 30 days and their shared records', async () => {
+      const thirtyDaysAgo = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000);
+      const mockNotes = [{ _id: 'note1' }, { _id: 'note2' }];
+      Note.find.mockResolvedValue(mockNotes);
+      Note.deleteMany.mockResolvedValue({ deletedCount: 2 });
+      
+      const { SharedNote } = require('../../../src/models');
+      SharedNote.deleteMany.mockResolvedValue({ deletedCount: 1 });
+
+      const result = await noteService.cleanupTrashedNotes();
+
+      expect(Note.find).toHaveBeenCalledWith({
+        status: 'trashed',
+        trashedAt: { $lt: expect.any(Date) },
+      });
+      expect(SharedNote.deleteMany).toHaveBeenCalledWith({ note: { $in: ['note1', 'note2'] } });
+      expect(Note.deleteMany).toHaveBeenCalledWith({ _id: { $in: ['note1', 'note2'] } });
+      expect(result.deletedCount).toBe(2);
+    });
+
+    test('should not delete anything if no old trashed notes are found', async () => {
+      Note.find.mockResolvedValue([]);
+      
+      const { SharedNote } = require('../../../src/models');
+      const result = await noteService.cleanupTrashedNotes();
+
+      expect(Note.deleteMany).not.toHaveBeenCalled();
+      expect(SharedNote.deleteMany).not.toHaveBeenCalled();
+      expect(result.deletedCount).toBe(0);
+    });
   });
 });
