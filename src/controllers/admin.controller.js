@@ -38,7 +38,7 @@ const getGlobalNotes = catchAsync(async (req, res) => {
   
   // Note: we can use noteService.queryNotes to get notes regardless of owner
   // The service doesn't mandate owner in the filter itself, it just takes the filter.
-  const result = await noteService.queryNotes(filter, options);
+  const result = await noteService.queryNotes(null, filter, options);
   
   const { results, ...meta } = result;
   res.status(httpStatus.OK).send({

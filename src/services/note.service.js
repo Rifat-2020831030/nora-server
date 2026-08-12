@@ -23,7 +23,10 @@ const createNote = async (userId, noteBody) => {
  * @returns {Promise<QueryResult>}
  */
 const queryNotes = async (userId, filter, options) => {
-  const noteFilter = { ...filter, owner: userId };
+  const noteFilter = { ...filter };
+  if (userId) {
+    noteFilter.owner = userId;
+  }
 
   if (filter.search) {
     noteFilter.$text = { $search: filter.search };
