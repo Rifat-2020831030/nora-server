@@ -1,8 +1,8 @@
 const { S3Client, PutObjectCommand } = require('@aws-sdk/client-s3');
 const { v4: uuidv4 } = require('uuid');
 const path = require('path');
-const config = require('../config/config');
 const httpStatus = require('http-status');
+const config = require('../config/config');
 const ApiError = require('../utils/ApiError');
 
 const s3Client = new S3Client({

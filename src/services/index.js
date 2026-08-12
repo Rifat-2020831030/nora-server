@@ -5,3 +5,4 @@ module.exports.noteService = require('./note.service');
 module.exports.shareService = require('./share.service');
 module.exports.mediaService = require('./media.service');
 module.exports.postService = require('./post.service');
+module.exports.analyticsService = require('./analytics.service');

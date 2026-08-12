@@ -4,6 +4,7 @@ const userRoute = require('./user.route');
 const noteRoute = require('./note.route');
 const mediaRoute = require('./media.route');
 const postRoute = require('./post.route');
+const adminRoute = require('./admin.route');
 const docsRoute = require('./docs.route');
 const config = require('../../config/config');
 
@@ -29,6 +30,10 @@ const defaultRoutes = [
   {
     path: '/posts',
     route: postRoute,
+  },
+  {
+    path: '/admin',
+    route: adminRoute,
   },
 ];
 
