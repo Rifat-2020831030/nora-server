@@ -1,5 +1,5 @@
-const { User } = require('../models');
 const mongoose = require('mongoose');
+const { User, Note, Post } = require('../models');
 
 /**
  * Get user interests aggregation
@@ -126,9 +126,20 @@ const getNoteCountsAnalytics = async (options) => {
   };
 };
 
+/**
+ * Get platform stats (total users, notes, and posts)
+ * @returns {Promise<Object>}
+ */
+const getPlatformStats = async () => {
+  const [users, notes, posts] = await Promise.all([User.countDocuments(), Note.countDocuments(), Post.countDocuments()]);
+
+  return { users, notes, posts };
+};
+
 module.exports = {
   getInterestsAnalytics,
   getUserPostsAnalytics,
   getUserGrowthAnalytics,
   getNoteCountsAnalytics,
+  getPlatformStats,
 };

@@ -64,6 +64,11 @@ const restoreNote = catchAsync(async (req, res) => {
   sendSuccess(res, httpStatus.OK, note);
 });
 
+const getNoteStats = catchAsync(async (req, res) => {
+  const stats = await noteService.getNoteStatsForUser(req.user.id);
+  sendSuccess(res, httpStatus.OK, stats);
+});
+
 module.exports = {
   createNote,
   getNotes,
@@ -73,4 +78,5 @@ module.exports = {
   archiveNote,
   trashNote,
   restoreNote,
+  getNoteStats,
 };

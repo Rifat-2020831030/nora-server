@@ -36,5 +36,6 @@ router.get(
   validate(adminValidation.getNoteCountsAnalytics),
   adminController.getNoteCountsAnalytics
 );
+router.get('/analytics/platform-stats', adminController.getPlatformStats);
 
 module.exports = router;

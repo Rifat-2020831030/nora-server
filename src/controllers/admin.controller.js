@@ -102,6 +102,11 @@ const getNoteCountsAnalytics = catchAsync(async (req, res) => {
   });
 });
 
+const getPlatformStats = catchAsync(async (req, res) => {
+  const stats = await analyticsService.getPlatformStats();
+  sendSuccess(res, httpStatus.OK, stats);
+});
+
 module.exports = {
   getUsers,
   updateUser,
@@ -114,4 +119,5 @@ module.exports = {
   getUserPostsAnalytics,
   getGrowthAnalytics,
   getNoteCountsAnalytics,
+  getPlatformStats,
 };

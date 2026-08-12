@@ -181,6 +181,24 @@ const cleanupTrashedNotes = async () => {
   return { deletedCount: noteIds.length };
 };
 
+/**
+ * Get note stats (count by status) for a user
+ * @param {ObjectId} userId
+ * @returns {Promise<Object>}
+ */
+const getNoteStatsForUser = async (userId) => {
+  const stats = await Note.aggregate([{ $match: { owner: userId } }, { $group: { _id: '$status', count: { $sum: 1 } } }]);
+
+  const result = { active: 0, archived: 0, trashed: 0 };
+  stats.forEach((stat) => {
+    if (result[stat._id] !== undefined) {
+      result[stat._id] = stat.count;
+    }
+  });
+
+  return result;
+};
+
 module.exports = {
   createNote,
   queryNotes,
@@ -192,4 +210,5 @@ module.exports = {
   trashNoteById,
   restoreNoteById,
   cleanupTrashedNotes,
+  getNoteStatsForUser,
 };

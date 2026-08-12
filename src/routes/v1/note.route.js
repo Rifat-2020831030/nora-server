@@ -10,6 +10,7 @@ const router = express.Router();
 
 // Define this before /:noteId to prevent it being caught as a parameter
 router.get('/shared-with-me', auth(), validate(shareValidation.getNotesSharedWithUser), shareController.getSharedWithMe);
+router.get('/stats', auth(), noteController.getNoteStats);
 
 router
   .route('/')
