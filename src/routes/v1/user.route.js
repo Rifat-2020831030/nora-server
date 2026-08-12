@@ -9,7 +9,7 @@ const router = express.Router();
 router
   .route('/me')
   .get(auth(), userController.getMe)
-  .patch(auth(), validate(userValidation.updateUser), userController.updateMe);
+  .patch(auth(), validate(userValidation.updateMe), userController.updateMe);
 
 router
   .route('/')
