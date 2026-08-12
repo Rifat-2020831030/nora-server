@@ -18,6 +18,8 @@ router
   .patch(validate(adminValidation.updateUser), adminController.updateUser)
   .delete(validate(adminValidation.deleteUser), adminController.deleteUser);
 
+router.post('/users/:userId/restore', validate(adminValidation.restoreUser), adminController.restoreUser);
+
 // Global content views
 router.get('/notes', adminController.getGlobalNotes);
 router.get('/posts', adminController.getGlobalPosts);

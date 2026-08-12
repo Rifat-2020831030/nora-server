@@ -27,8 +27,13 @@ const deleteUser = catchAsync(async (req, res) => {
   res.status(httpStatus.NO_CONTENT).send();
 });
 
+const restoreUser = catchAsync(async (req, res) => {
+  const user = await userService.restoreUserById(req.params.userId);
+  sendSuccess(res, httpStatus.OK, user);
+});
+
 const getGlobalNotes = catchAsync(async (req, res) => {
-  const filter = pick(req.query, ['status', 'tags', 'search']);
+  const filter = pick(req.query, ['status', 'tags', 'search', 'owner']);
   const options = pick(req.query, ['sortBy', 'limit', 'page']);
   
   // Note: we can use noteService.queryNotes to get notes regardless of owner
@@ -44,7 +49,7 @@ const getGlobalNotes = catchAsync(async (req, res) => {
 });
 
 const getGlobalPosts = catchAsync(async (req, res) => {
-  const filter = pick(req.query, ['search']);
+  const filter = pick(req.query, ['search', 'author']);
   const options = pick(req.query, ['sortBy', 'limit', 'page']);
   
   // The postService filters out `isDeleted: false` by default for public APIs.
@@ -80,6 +85,7 @@ module.exports = {
   getUsers,
   updateUser,
   deleteUser,
+  restoreUser,
   getGlobalNotes,
   getGlobalPosts,
   getInterestsAnalytics,

@@ -81,6 +81,22 @@ const deleteUserById = async (userId) => {
   return user;
 };
 
+/**
+ * Restore user by id
+ * @param {ObjectId} userId
+ * @returns {Promise<User>}
+ */
+const restoreUserById = async (userId) => {
+  const user = await getUserById(userId);
+  if (!user) {
+    throw new ApiError(httpStatus.NOT_FOUND, 'User not found');
+  }
+  user.isDeleted = false;
+  user.deletedAt = null;
+  await user.save();
+  return user;
+};
+
 module.exports = {
   createUser,
   queryUsers,
@@ -88,4 +104,5 @@ module.exports = {
   getUserByEmail,
   updateUserById,
   deleteUserById,
+  restoreUserById,
 };

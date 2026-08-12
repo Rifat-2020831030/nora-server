@@ -38,9 +38,16 @@ const getUserPostsAnalytics = {
   }),
 };
 
+const restoreUser = {
+  params: Joi.object().keys({
+    userId: Joi.string().custom(objectId),
+  }),
+};
+
 module.exports = {
   getUsers,
   updateUser,
   deleteUser,
+  restoreUser,
   getUserPostsAnalytics,
 };
